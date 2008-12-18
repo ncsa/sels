@@ -9,8 +9,8 @@ import sys
 import string
 # Global variable definition
 ########################################################################################################################
-# Define the key expiration time (in years) for keys related to list. Default = 1 year
-keyexp = 1
+# Define the key expiration time (in years) for keys related to list. Default = 3 year (Maximum Value at List Server = 5 years)
+keyexp = 3 
 # Define the key size. It is either 1024 or 2048. Default = 1024
 keysize = 1024 
 # Define a Subscriber password for your list subscribers.  You will give this password to each user on your list.

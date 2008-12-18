@@ -13,8 +13,8 @@ import string
 from SELSconfig import *
 from SELSLSpath import *
 # Global variable definition
-# Define the key expiration time (in years) for keys related to list. Default = 1 year
-keyexp = 1 
+# Define the key expiration time (in years) for keys related to list. Default = 5 years (maximum value)
+keyexp = 5 
 # Edit and enter the value of the SMTP server (Mailman installation should use this SMTP server)
 SMTPServer = "smtp.example.com"
 # Edit and enter the value of your SMTPPort

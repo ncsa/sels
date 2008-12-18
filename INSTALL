@@ -10,7 +10,7 @@ Copy the sels-x.x folder to an appropriate location.
 Make sure you meet all the prerequisites (http://sels.ncsa.uiuc.edu/install.html#List2)
 1. Start using the code. Look at  (http://sels.ncsa.uiuc.edu/usage.html)
 2. You can edit SELSLMConfig.py to change the default values for the following variables:
-   keyexp: An integer value for key expiration time in years. Default = 1
+   keyexp: An integer value for key expiration time in years. Default = 3, (Note: Maximum value at List server is set to 5 years)
    keysize: An integer value for key length. Can be either 1024 or 2048. Default = 1024
    SubPass: A password string used during user subscription (both batch and individual). 
             If you choose to leave it blank then you will be prompted for the value during script execution 
@@ -56,7 +56,7 @@ Note: If you are doing a reinstall of SELS LS code, remember to make a backup of
 
 5. Restart mailman using ~/mailman/bin/mailmanctl restart.
   
-6. Edit SELSLSConfig.py and change default values of Global variables. Leave LK_KEY_ID as none etc.
+6. Edit SELSLSConfig.py and change default values of Global variables. Leave LK_KEY_ID as none etc. (Note: Maximum value for keyexp = 5 years)
 
 7. On getting email request to "create new list" from LM , create list using
 
