@@ -26,10 +26,9 @@ from Mailman.Logging.Syslog import syslog
 from Mailman import mm_cfg
 #from Mailman import GPGUtils
 from Mailman import Utils
-from socket import *
+from SELSsmtphelper import createbounce
 from SELSpath import *
 from mailmanlogs import *
-import threading
 import GnuPGInterface
 import os
 import string
@@ -68,37 +67,52 @@ def process(mlist, msg, msgdata):
 			syslog( 'error', "empty message; message was discarded" )
 			raise Errors.DiscardMessage
 		else:
-			plaintext(mlist, msg, msgdata, subject, sender)
+			checks(mlist, msg, msgdata, subject, sender)
 			
 	else:	
 		#Check no subject cases too
-		plaintext(mlist, msg, msgdata, subject, sender)
+		subject = ''
+		checks(mlist, msg, msgdata, subject, sender)
 
-def plaintext(mlist, msg, msgdata, subject, sender):
-	#Send the plaintext message to list moderator
-	msgstr = str(msg)
-	payloadstr = str(msg.get_payload())
-	if (msgstr.find('-----BEGIN PGP MESSAGE-----') == -1):
-		to = mlist.owner[0]
+def checks(mlist, msg, msgdata, subject, sender):
+	msgstr = msg.get_payload()
+	msgstr = str(msgstr)
+	msgstr.strip()
+	if msgstr == None:
+		add0 = "A message sent by you %s, to list %s is empty"%(mlist.internal_name(), sender)
+		add1 = "Dropped Message Subject: "
+		emptymsg = add0 +'\n'+ add1 + subject + '\n'
+		syslog("error", "Empty message bounced back to user on %s"%(mlist.internal_name()))
+		createbounce( emptymsg, mlist, sender)
+	
+	# Remove any newlines or whitespace 
+	msgstr.strip() 
+	pgpmsg_flag = 0
+	pgpsign_flag = 0
+	if ('-----BEGIN PGP MESSAGE-----') in msgstr:
+		pgpmsg_flag = 1
+	
+	if ('-----BEGIN PGP SIGNED MESSAGE-----') in msgstr:
+		pgpsign_flag = 1
+		
+	if pgpmsg_flag == 0:
 		add0 = "A message sent by you on list %s was dropped at the server."%(mlist.internal_name())
 		add1 = " This SELS list only allows encrypted OR encrypted and signed messages. Additionally SELS only supports"
-		add2 = " PGP MIME encryption for HTML messages and encrypted attachments. Please resend."
+		add2 = " PGP MIME encryption and signing for HTML messages and attachments. Please resend."
 		add3 = "Dropped Message Subject: "
-		msgmod = add0 + add1 + add2 + '\n'+ add3 + subject + '\n'
-		msgfile = MAILMAN_LOG_PATH + '/SELS_msg.txt'
-		syslog("error","plaintext message on list %s bounced back to user %s"% (mlist.internal_name(),sender))
-		try:
-			fp = open(msgfile, 'w')
-			fp.write(msgmod)
-			fp.close()
-		except IOError:
-			syslog('error', "Cannot open msgfile file")
-		selslog = MAILMAN_LOG_PATH + "/SELS.log"
-		cmd = "python %s/bin/SELSProcess.py -l %s -u %s -f %s -b >> %s  2>&1"%\
- 	               (SELSPATH, mlist.internal_name(),sender, msgfile, selslog)
+		plainmsg = add0 + add1 + add2 + '\n'+ add3 + subject + '\n'
+		syslog("error"," Plaintext message is being sent on list %s"% (mlist.internal_name()))
+		createbounce( plainmsg, mlist, sender)
 
-		os.system(cmd)
-		raise Errors.DiscardMessage
+	elif pgpmsg_flag == 1 and pgpsign_flag ==1:
+		add0 = "A message sent by you on list %s was dropped at the server."%(mlist.internal_name())
+                add1 = " This message has been signed inline. SELS only supports MIME signed messages"
+                add2 = " Please resend."
+                add3 = "Dropped Message Subject: "
+                signmsg = add0 + add1 + add2 + '\n'+ add3 + subject + '\n'
+		syslog("error"," Clearsigned message is being sent on list %s"% (mlist.internal_name()))
+		createbounce( signmsg, mlist, sender)
+
 	else:
 		syslog("error"," Encrypted message is being sent on list %s"% (mlist.internal_name()))
 

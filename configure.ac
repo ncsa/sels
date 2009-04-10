@@ -8,9 +8,9 @@ case $target in
 *-*-linux*) ;;
 *) AC_MSG_ERROR([Linux only, dude!]);;
 esac
-AC_INIT([sels],[1.0],[sels@ncsa.uiuc.edu] )
+AC_INIT([sels],[1.1],[sels@ncsa.uiuc.edu] )
 AM_INIT_AUTOMAKE([-Wall, -Werror, foreign])
-version="1.0"
+version="1.1"
 AC_SUBST(version)
 AC_OUTPUT(LS/bin/version.py)
 AC_OUTPUT(LM/bin/version.py)

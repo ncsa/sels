@@ -18,13 +18,11 @@ selsgpg = MAILMAN_LOG_PATH + "/SELS_GPG_msg.txt"
 selsmsg = MAILMAN_LOG_PATH + "/SELS_msg.txt"
 
 def transform(msgbody, mlist, recip):
-    if msgbody == None or len(msgbody) == 0:
-        syslog("error", 'Message being returned to user without transformation' )
-        return msgbody
     lines = msgbody.splitlines()
-    if lines[0].startswith('-----BEGIN PGP MESSAGE-----') == False :
-        syslog ("error", 'Not an encrypted message. Returned to user')
-        return msgbody
+    #if lines[0].startswith('-----BEGIN PGP MESSAGE-----') == False :
+    if '-----BEGIN PGP MESSAGE-----' not in lines:	
+   	syslog ("error", 'Not an encrypted message. Returned to user')
+   	return msgbody
     msgfile = selsgpg 
     try:
         fp = open( msgfile, 'w' )

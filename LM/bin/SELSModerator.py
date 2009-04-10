@@ -1132,7 +1132,7 @@ def main(arvg=None):
                 if len(args) == 5:
 			pass
 		else:
-                	print 'Not enough input arguments. Try again'
+                	print 'Wrong input arguments. Try again'
                         usage()
 	
 	listSELSPath = LM_PATH + '/lists/' + list 
@@ -1144,7 +1144,12 @@ def main(arvg=None):
 		yearstoexp = 1
 	# not accounting for leap years
 	secstoexp = yearstoexp * 365 * 24 * 60 * 60 
-			
+        
+        ########
+        #Turning off batch and update keys
+	batchflag = 0
+	updatekeys = False
+        ########			
 	if ((list != "")and (createLMkeys)):
 		#Check to see if you have the right poilcy files 
 		policycheck()
@@ -1464,7 +1469,7 @@ def main(arvg=None):
 						# Set dummy user pass
 						userpass = "dummy"
 					else:
-						print"Not enough input arguments. Try again !"
+						print" Wrong input arguments. Try again !"
 						usage()
 
 				#Get LM_PASS	
@@ -1609,7 +1614,7 @@ def main(arvg=None):
                                         	deleteUserkey(list, dummyuser)
 						print "End of Batch Subscription Process."
     					else:
-        					print 'Not enough input arguments. Try again'
+        					print 'Wrong input arguments. Try again'
         					usage()
 
 				sigkey = listSELSPath + '/LM_sig_secret.asc'
@@ -1623,7 +1628,7 @@ def main(arvg=None):
 		else:
 			pass
  	else:
-		print 'Wrong number of arguments'
+		print 'Wrong input arguments. Try again'
 		print ''
 		usage()
 	
